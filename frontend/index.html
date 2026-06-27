@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fatalscan - Security Scanner</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+
+  <div class="container">
+
+    <header>
+      <div class="logo">
+        <i data-lucide="shield-alert"></i>
+        <span>Fatalscan</span>
+      </div>
+      <p class="tagline">Advanced Website Security Scanner</p>
+      <p class="sub-tagline">Detect vulnerabilities before attackers do</p>
+    </header>
+
+    <div class="input-box">
+      <div class="input-wrapper">
+        <i data-lucide="globe"></i>
+        <input type="text" id="urlInput" placeholder="Enter URL or domain (e.g. example.com)" />
+      </div>
+      <button id="scanBtn">
+        <i data-lucide="scan-search"></i>
+        <span>Scan</span>
+      </button>
+    </div>
+
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <span>Scanning target, please wait...</span>
+    </div>
+
+    <div id="results" class="hidden">
+
+      <div class="results-grid">
+
+        <div class="card" id="card-headers">
+          <div class="card-header">
+            <i data-lucide="shield-check"></i>
+            <h2>Security Headers</h2>
+          </div>
+          <div id="result-headers"></div>
+        </div>
+
+        <div class="card" id="card-ssl">
+          <div class="card-header">
+            <i data-lucide="lock"></i>
+            <h2>SSL Certificate</h2>
+          </div>
+          <div id="result-ssl"></div>
+        </div>
+
+        <div class="card" id="card-dns">
+          <div class="card-header">
+            <i data-lucide="network"></i>
+            <h2>DNS Info</h2>
+          </div>
+          <div id="result-dns"></div>
+        </div>
+
+        <div class="card" id="card-ports">
+          <div class="card-header">
+            <i data-lucide="door-open"></i>
+            <h2>Port Scanner</h2>
+          </div>
+          <div id="result-ports"></div>
+        </div>
+
+      </div>
+
+      <div class="results-grid">
+
+        <div class="card" id="card-whois">
+          <div class="card-header">
+            <i data-lucide="user-search"></i>
+            <h2>WHOIS Lookup</h2>
+          </div>
+          <div id="result-whois"></div>
+        </div>
+
+        <div class="card" id="card-redirects">
+          <div class="card-header">
+            <i data-lucide="arrow-right-left"></i>
+            <h2>Redirect Chain</h2>
+          </div>
+          <div id="result-redirects"></div>
+        </div>
+
+        <div class="card" id="card-tech">
+          <div class="card-header">
+            <i data-lucide="cpu"></i>
+            <h2>Technology Detector</h2>
+          </div>
+          <div id="result-tech"></div>
+        </div>
+
+        <div class="card score-card">
+          <div class="card-header">
+            <i data-lucide="bar-chart-2"></i>
+            <h2>Security Score</h2>
+          </div>
+          <div id="result-score"></div>
+        </div>
+
+      </div>
+
+      <div class="card export-card">
+        <div class="card-header">
+          <i data-lucide="file-down"></i>
+          <h2>Export Report</h2>
+        </div>
+        <p class="export-desc">Download the full scan result as a PDF report.</p>
+        <button id="exportBtn">
+          <i data-lucide="download"></i>
+          <span>Download PDF</span>
+        </button>
+      </div>
+
+    </div>
+
+    <footer>
+      <p>Fatalscan &copy; 2026 &mdash; For educational and ethical use only</p>
+    </footer>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="script.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
