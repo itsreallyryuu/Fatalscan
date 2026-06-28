@@ -187,6 +187,423 @@ app.get('/check/tech', async (req, res) => {
   }
 });
 
+// 3. HTTP Methods Scanner
+app.get('/check/methods', async (req, res) => {
+  const { url } = req.query;
+  const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD', 'TRACE'];
+  const results = {};
+
+  await Promise.all(methods.map(async (method) => {
+    try {
+      const response = await axios({ method, url, timeout: 5000, validateStatus: () => true });
+      results[method] = { status: response.status, allowed: response.status !== 405 };
+    } catch {
+      results[method] = { status: 'Error', allowed: false };
+    }
+  }));
+
+  res.json({ success: true, results });
+});
+
+// 4. CORS Configuration Scanner
+app.get('/check/cors', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, {
+      timeout: 5000,
+      headers: { 'Origin': 'https://evil.com' },
+      validateStatus: () => true
+    });
+    const headers = response.headers;
+    const acao = headers['access-control-allow-origin'];
+    const acac = headers['access-control-allow-credentials'];
+
+    res.json({
+      success: true,
+      allowOrigin: acao || 'Not Set',
+      allowCredentials: acac || 'Not Set',
+      vulnerable: acao === '*' || acao === 'https://evil.com',
+      wildcardUsed: acao === '*',
+    });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// 5. Cookie Security Scanner
+app.get('/check/cookies', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const rawCookies = response.headers['set-cookie'] || [];
+
+    if (rawCookies.length === 0) {
+      return res.json({ success: true, cookies: [], message: 'No cookies found' });
+    }
+
+    const cookies = rawCookies.map(cookie => ({
+      raw: cookie.split(';')[0],
+      httpOnly: /httponly/i.test(cookie),
+      secure: /secure/i.test(cookie),
+      sameSite: /samesite=(\w+)/i.exec(cookie)?.[1] || 'Not Set',
+    }));
+
+    res.json({ success: true, cookies });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// 6. Clickjacking Protection Scanner
+app.get('/check/clickjacking', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const headers = response.headers;
+    const xfo = headers['x-frame-options'];
+    const csp = headers['content-security-policy'];
+    const hasFrameAncestors = csp && /frame-ancestors/i.test(csp);
+
+    res.json({
+      success: true,
+      xFrameOptions: xfo || 'Not Set',
+      cspFrameAncestors: hasFrameAncestors ? 'Present' : 'Not Set',
+      protected: !!(xfo || hasFrameAncestors),
+    });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// 7. CSP Analyzer
+app.get('/check/csp', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const csp = response.headers['content-security-policy'];
+
+    if (!csp) return res.json({ success: true, present: false, directives: [] });
+
+    const directives = csp.split(';').map(d => d.trim()).filter(Boolean);
+    res.json({ success: true, present: true, directives });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// 8. Referrer Policy Checker
+app.get('/check/referrer', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const policy = response.headers['referrer-policy'];
+    const safeValues = ['no-referrer', 'strict-origin', 'strict-origin-when-cross-origin'];
+
+    res.json({
+      success: true,
+      policy: policy || 'Not Set',
+      safe: policy ? safeValues.includes(policy.toLowerCase()) : false,
+    });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// 9. Permissions Policy Checker
+app.get('/check/permissions', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const policy = response.headers['permissions-policy'] || response.headers['feature-policy'];
+
+    res.json({
+      success: true,
+      present: !!policy,
+      policy: policy || 'Not Set',
+    });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// 10. Cross-Origin Policy Checker
+app.get('/check/crossorigin', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const headers = response.headers;
+
+    res.json({
+      success: true,
+      coep: headers['cross-origin-embedder-policy'] || 'Not Set',
+      coop: headers['cross-origin-opener-policy'] || 'Not Set',
+      corp: headers['cross-origin-resource-policy'] || 'Not Set',
+    });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Server Detection
+app.get('/check/server', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const server = response.headers['server'] || 'Not Set';
+    const poweredBy = response.headers['x-powered-by'] || 'Not Set';
+    res.json({
+      success: true,
+      server,
+      poweredBy,
+      exposed: server !== 'Not Set' || poweredBy !== 'Not Set',
+    });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// HTTP Version Detection
+app.get('/check/httpversion', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const version = response.request?.res?.httpVersion || '1.1';
+    res.json({ success: true, version: `HTTP/${version}` });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Robots.txt Scanner
+app.get('/check/robots', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(`${url}/robots.txt`, { timeout: 5000, validateStatus: () => true });
+    if (response.status !== 200) return res.json({ success: false });
+    const body = response.data;
+    const disallowCount = (body.match(/Disallow:/gi) || []).length;
+    const hasSitemap = /sitemap/i.test(body);
+    res.json({ success: true, hasSitemap, disallowCount });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Sitemap.xml Scanner
+app.get('/check/sitemap', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(`${url}/sitemap.xml`, { timeout: 5000, validateStatus: () => true });
+    if (response.status !== 200) return res.json({ success: false });
+    const urlCount = (response.data.match(/<url>/gi) || []).length;
+    res.json({ success: true, urlCount });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Sensitive Files Scanner
+app.get('/check/sensitivefiles', async (req, res) => {
+  const { url } = req.query;
+  const files = ['.env', '.git/config', '.htaccess', 'wp-config.php', 'config.php'];
+  const found = [];
+  await Promise.all(files.map(async (file) => {
+    try {
+      const r = await axios.get(`${url}/${file}`, { timeout: 4000, validateStatus: () => true });
+      if (r.status === 200) found.push(file);
+    } catch {}
+  }));
+  res.json({ success: true, found });
+});
+
+// Config Files Scanner
+app.get('/check/configfiles', async (req, res) => {
+  const { url } = req.query;
+  const files = ['config.yml', 'config.yaml', 'config.json', 'database.yml', 'settings.py', 'appsettings.json'];
+  const found = [];
+  await Promise.all(files.map(async (file) => {
+    try {
+      const r = await axios.get(`${url}/${file}`, { timeout: 4000, validateStatus: () => true });
+      if (r.status === 200) found.push(file);
+    } catch {}
+  }));
+  res.json({ success: true, found });
+});
+
+// Backup Files Scanner
+app.get('/check/backupfiles', async (req, res) => {
+  const { url } = req.query;
+  const files = ['backup.zip', 'backup.sql', 'db.sql', 'dump.sql', 'site.tar.gz', 'backup.tar.gz'];
+  const found = [];
+  await Promise.all(files.map(async (file) => {
+    try {
+      const r = await axios.get(`${url}/${file}`, { timeout: 4000, validateStatus: () => true });
+      if (r.status === 200) found.push(file);
+    } catch {}
+  }));
+  res.json({ success: true, found });
+});
+
+// Default Pages Scanner
+app.get('/check/defaultpages', async (req, res) => {
+  const { url } = req.query;
+  const pages = ['/admin', '/login', '/phpmyadmin', '/wp-admin', '/administrator', '/cpanel'];
+  const found = [];
+  await Promise.all(pages.map(async (page) => {
+    try {
+      const r = await axios.get(`${url}${page}`, { timeout: 4000, validateStatus: () => true });
+      if (r.status === 200 || r.status === 401 || r.status === 403) found.push(page);
+    } catch {}
+  }));
+  res.json({ success: true, found });
+});
+
+// Email Leakage Scanner
+app.get('/check/emailleakage', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const emails = [...new Set(response.data.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}/g) || [])];
+    res.json({ success: true, emails });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Comment Leakage Scanner
+app.get('/check/commentleakage', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const comments = [...(response.data.match(/<!--[\s\S]*?-->/g) || [])]
+      .filter(c => /todo|fix|hack|password|secret|key|bug|admin|remove/i.test(c));
+    res.json({ success: true, comments });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Source Map Exposure
+app.get('/check/sourcemap', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const exposed = /\.map['"]/.test(response.data);
+    res.json({ success: true, exposed });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Manifest.json Analyzer
+app.get('/check/manifest', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(`${url}/manifest.json`, { timeout: 5000, validateStatus: () => true });
+    if (response.status !== 200) return res.json({ success: false });
+    const data = response.data;
+    res.json({ success: true, name: data.name, startUrl: data.start_url });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Mixed Content Scanner
+app.get('/check/mixedcontent', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const hasMixed = /http:\/\/[^"'\s]+\.(js|css|png|jpg|gif|svg)/i.test(response.data);
+    res.json({ success: true, hasMixed });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// HTTPS Enforcement
+app.get('/check/https', async (req, res) => {
+  const { url } = req.query;
+  const httpUrl = url.replace('https://', 'http://');
+  try {
+    const response = await axios.get(httpUrl, { timeout: 5000, maxRedirects: 0, validateStatus: () => true });
+    const redirectsToHttps = response.status >= 300 && response.status < 400 &&
+      response.headers['location']?.startsWith('https');
+    res.json({ success: true, usesHttps: url.startsWith('https'), redirectsToHttps: !!redirectsToHttps });
+  } catch (err) {
+    res.json({ success: true, usesHttps: url.startsWith('https'), redirectsToHttps: false });
+  }
+});
+
+// HSTS Checker
+app.get('/check/hsts', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(url, { timeout: 5000, validateStatus: () => true });
+    const hsts = response.headers['strict-transport-security'];
+    const maxAgeMatch = hsts?.match(/max-age=(\d+)/);
+    res.json({
+      success: true,
+      present: !!hsts,
+      maxAge: maxAgeMatch ? maxAgeMatch[1] : null,
+      includeSubdomains: /includeSubDomains/i.test(hsts || ''),
+    });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
+
+// Certificate Expiration
+app.get('/check/certexpiry', (req, res) => {
+  const { domain } = req.query;
+  const options = { host: domain, port: 443, method: 'GET' };
+  const request = https.request(options, (response) => {
+    const cert = response.socket.getPeerCertificate();
+    if (!cert || !cert.valid_to) return res.json({ success: false });
+    const validTo = new Date(cert.valid_to);
+    const daysLeft = Math.floor((validTo - new Date()) / (1000 * 60 * 60 * 24));
+    res.json({ success: true, validTo: cert.valid_to, daysLeft, expired: daysLeft < 0 });
+  });
+  request.on('error', () => res.json({ success: false }));
+  request.end();
+});
+
+// Security.txt Scanner
+app.get('/check/securitytxt', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(`${url}/.well-known/security.txt`, { timeout: 5000, validateStatus: () => true });
+    if (response.status !== 200) return res.json({ success: false });
+    const contact = response.data.match(/Contact:\s*(.+)/i)?.[1]?.trim();
+    res.json({ success: true, contact });
+  } catch (err) {
+    res.json({ success: false });
+  }
+});
+
+// Humans.txt Scanner
+app.get('/check/humanstxt', async (req, res) => {
+  const { url } = req.query;
+  try {
+    const response = await axios.get(`${url}/humans.txt`, { timeout: 5000, validateStatus: () => true });
+    res.json({ success: response.status === 200 });
+  } catch (err) {
+    res.json({ success: false });
+  }
+});
+
+// Swagger / API Docs Detection
+app.get('/check/swagger', async (req, res) => {
+  const { url } = req.query;
+  const paths = ['/swagger', '/api-docs', '/openapi.json', '/swagger.json', '/api/swagger'];
+  for (const path of paths) {
+    try {
+      const r = await axios.get(`${url}${path}`, { timeout: 4000, validateStatus: () => true });
+      if (r.status === 200) return res.json({ success: true, path });
+    } catch {}
+  }
+  res.json({ success: false });
+});
+
 app.listen(PORT, () => {
   console.log(`Server jalan di http://localhost:${PORT}`);
 });

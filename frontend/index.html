@@ -9,19 +9,14 @@
   <meta name="keywords" content="website security scanner, free vulnerability checker, SSL checker, port scanner, security headers, WHOIS lookup, website security tool" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Fatalscan" />
-
-  <!-- Open Graph (tampilan saat dishare di sosmed) -->
   <meta property="og:title" content="Fatalscan - Free Website Security Scanner" />
   <meta property="og:description" content="Detect vulnerabilities before attackers do. Free, fast, and easy to use." />
   <meta property="og:url" content="https://fatalscan.vercel.app" />
   <meta property="og:type" content="website" />
-
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Fatalscan - Free Website Security Scanner" />
   <meta name="twitter:description" content="Detect vulnerabilities before attackers do. Free, fast, and easy to use." />
-
-<meta name="google-site-verification" content="CerN1wgOPh95bxgA1mq_vcOiy8by2X1qyu5zLjN-QVY" />
+  <meta name="google-site-verification" content="CerN1wgOPh95bxgA1mq_vcOiy8by2X1qyu5zLjN-QVY" />
   <link rel="canonical" href="https://fatalscan.vercel.app" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -59,8 +54,9 @@
 
     <div id="results" class="hidden">
 
+      <!-- Group 1: Core Security -->
+      <p class="group-label">Core Security</p>
       <div class="results-grid">
-
         <div class="card" id="card-headers">
           <div class="card-header">
             <i data-lucide="shield-check"></i>
@@ -68,7 +64,6 @@
           </div>
           <div id="result-headers"></div>
         </div>
-
         <div class="card" id="card-ssl">
           <div class="card-header">
             <i data-lucide="lock"></i>
@@ -76,7 +71,6 @@
           </div>
           <div id="result-ssl"></div>
         </div>
-
         <div class="card" id="card-dns">
           <div class="card-header">
             <i data-lucide="network"></i>
@@ -84,7 +78,6 @@
           </div>
           <div id="result-dns"></div>
         </div>
-
         <div class="card" id="card-ports">
           <div class="card-header">
             <i data-lucide="door-open"></i>
@@ -92,11 +85,72 @@
           </div>
           <div id="result-ports"></div>
         </div>
-
       </div>
 
+      <!-- Group 2: Header & Policy -->
+      <p class="group-label">Header & Policy</p>
       <div class="results-grid">
+        <div class="card" id="card-methods">
+          <div class="card-header">
+            <i data-lucide="activity"></i>
+            <h2>HTTP Methods</h2>
+          </div>
+          <div id="result-methods"></div>
+        </div>
+        <div class="card" id="card-cors">
+          <div class="card-header">
+            <i data-lucide="share-2"></i>
+            <h2>CORS Configuration</h2>
+          </div>
+          <div id="result-cors"></div>
+        </div>
+        <div class="card" id="card-cookies">
+          <div class="card-header">
+            <i data-lucide="cookie"></i>
+            <h2>Cookie Security</h2>
+          </div>
+          <div id="result-cookies"></div>
+        </div>
+        <div class="card" id="card-clickjacking">
+          <div class="card-header">
+            <i data-lucide="mouse-pointer-click"></i>
+            <h2>Clickjacking Protection</h2>
+          </div>
+          <div id="result-clickjacking"></div>
+        </div>
+        <div class="card" id="card-csp">
+          <div class="card-header">
+            <i data-lucide="file-shield"></i>
+            <h2>CSP Analyzer</h2>
+          </div>
+          <div id="result-csp"></div>
+        </div>
+        <div class="card" id="card-referrer">
+          <div class="card-header">
+            <i data-lucide="link"></i>
+            <h2>Referrer Policy</h2>
+          </div>
+          <div id="result-referrer"></div>
+        </div>
+        <div class="card" id="card-permissions">
+          <div class="card-header">
+            <i data-lucide="shield-off"></i>
+            <h2>Permissions Policy</h2>
+          </div>
+          <div id="result-permissions"></div>
+        </div>
+        <div class="card" id="card-crossorigin">
+          <div class="card-header">
+            <i data-lucide="git-branch"></i>
+            <h2>Cross-Origin Policy</h2>
+          </div>
+          <div id="result-crossorigin"></div>
+        </div>
+      </div>
 
+      <!-- Group 3: Fingerprint & Detection -->
+      <p class="group-label">Fingerprint & Detection</p>
+      <div class="results-grid">
         <div class="card" id="card-whois">
           <div class="card-header">
             <i data-lucide="user-search"></i>
@@ -104,15 +158,6 @@
           </div>
           <div id="result-whois"></div>
         </div>
-
-        <div class="card" id="card-redirects">
-          <div class="card-header">
-            <i data-lucide="arrow-right-left"></i>
-            <h2>Redirect Chain</h2>
-          </div>
-          <div id="result-redirects"></div>
-        </div>
-
         <div class="card" id="card-tech">
           <div class="card-header">
             <i data-lucide="cpu"></i>
@@ -120,7 +165,171 @@
           </div>
           <div id="result-tech"></div>
         </div>
+        <div class="card" id="card-server">
+          <div class="card-header">
+            <i data-lucide="server"></i>
+            <h2>Web Server Detection</h2>
+          </div>
+          <div id="result-server"></div>
+        </div>
+        <div class="card" id="card-httpversion">
+          <div class="card-header">
+            <i data-lucide="zap"></i>
+            <h2>HTTP Version</h2>
+          </div>
+          <div id="result-httpversion"></div>
+        </div>
+      </div>
 
+      <!-- Group 4: File & Directory -->
+      <p class="group-label">File & Directory</p>
+      <div class="results-grid">
+        <div class="card" id="card-robots">
+          <div class="card-header">
+            <i data-lucide="bot"></i>
+            <h2>Robots.txt</h2>
+          </div>
+          <div id="result-robots"></div>
+        </div>
+        <div class="card" id="card-sitemap">
+          <div class="card-header">
+            <i data-lucide="map"></i>
+            <h2>Sitemap.xml</h2>
+          </div>
+          <div id="result-sitemap"></div>
+        </div>
+        <div class="card" id="card-sensitivefiles">
+          <div class="card-header">
+            <i data-lucide="file-warning"></i>
+            <h2>Sensitive Files</h2>
+          </div>
+          <div id="result-sensitivefiles"></div>
+        </div>
+        <div class="card" id="card-configfiles">
+          <div class="card-header">
+            <i data-lucide="settings-2"></i>
+            <h2>Config Files</h2>
+          </div>
+          <div id="result-configfiles"></div>
+        </div>
+        <div class="card" id="card-backupfiles">
+          <div class="card-header">
+            <i data-lucide="archive"></i>
+            <h2>Backup Files</h2>
+          </div>
+          <div id="result-backupfiles"></div>
+        </div>
+        <div class="card" id="card-defaultpages">
+          <div class="card-header">
+            <i data-lucide="layout-template"></i>
+            <h2>Default Pages</h2>
+          </div>
+          <div id="result-defaultpages"></div>
+        </div>
+      </div>
+
+      <!-- Group 5: JS & Leakage -->
+      <p class="group-label">JS & Leakage</p>
+      <div class="results-grid">
+        <div class="card" id="card-emailleakage">
+          <div class="card-header">
+            <i data-lucide="mail-warning"></i>
+            <h2>Email Leakage</h2>
+          </div>
+          <div id="result-emailleakage"></div>
+        </div>
+        <div class="card" id="card-commentleakage">
+          <div class="card-header">
+            <i data-lucide="message-square-warning"></i>
+            <h2>Comment Leakage</h2>
+          </div>
+          <div id="result-commentleakage"></div>
+        </div>
+        <div class="card" id="card-sourcemap">
+          <div class="card-header">
+            <i data-lucide="file-code"></i>
+            <h2>Source Map Exposure</h2>
+          </div>
+          <div id="result-sourcemap"></div>
+        </div>
+        <div class="card" id="card-manifest">
+          <div class="card-header">
+            <i data-lucide="package"></i>
+            <h2>Manifest.json</h2>
+          </div>
+          <div id="result-manifest"></div>
+        </div>
+      </div>
+
+      <!-- Group 6: HTTPS & TLS -->
+      <p class="group-label">HTTPS & TLS</p>
+      <div class="results-grid">
+        <div class="card" id="card-mixedcontent">
+          <div class="card-header">
+            <i data-lucide="alert-triangle"></i>
+            <h2>Mixed Content</h2>
+          </div>
+          <div id="result-mixedcontent"></div>
+        </div>
+        <div class="card" id="card-https">
+          <div class="card-header">
+            <i data-lucide="shield"></i>
+            <h2>HTTPS Enforcement</h2>
+          </div>
+          <div id="result-https"></div>
+        </div>
+        <div class="card" id="card-hsts">
+          <div class="card-header">
+            <i data-lucide="lock-keyhole"></i>
+            <h2>HSTS Checker</h2>
+          </div>
+          <div id="result-hsts"></div>
+        </div>
+        <div class="card" id="card-certexpiry">
+          <div class="card-header">
+            <i data-lucide="calendar-x"></i>
+            <h2>Certificate Expiration</h2>
+          </div>
+          <div id="result-certexpiry"></div>
+        </div>
+      </div>
+
+      <!-- Group 7: Well-known & API -->
+      <p class="group-label">Well-known & API</p>
+      <div class="results-grid">
+        <div class="card" id="card-redirects">
+          <div class="card-header">
+            <i data-lucide="arrow-right-left"></i>
+            <h2>Redirect Chain</h2>
+          </div>
+          <div id="result-redirects"></div>
+        </div>
+        <div class="card" id="card-securitytxt">
+          <div class="card-header">
+            <i data-lucide="file-lock"></i>
+            <h2>Security.txt</h2>
+          </div>
+          <div id="result-securitytxt"></div>
+        </div>
+        <div class="card" id="card-humanstxt">
+          <div class="card-header">
+            <i data-lucide="users"></i>
+            <h2>Humans.txt</h2>
+          </div>
+          <div id="result-humanstxt"></div>
+        </div>
+        <div class="card" id="card-swagger">
+          <div class="card-header">
+            <i data-lucide="book-open"></i>
+            <h2>API Docs Detection</h2>
+          </div>
+          <div id="result-swagger"></div>
+        </div>
+      </div>
+
+      <!-- Score & Export -->
+      <p class="group-label">Report</p>
+      <div class="results-grid">
         <div class="card score-card">
           <div class="card-header">
             <i data-lucide="bar-chart-2"></i>
@@ -128,7 +337,13 @@
           </div>
           <div id="result-score"></div>
         </div>
-
+        <div class="card score-card">
+          <div class="card-header">
+            <i data-lucide="award"></i>
+            <h2>Security Grade</h2>
+          </div>
+          <div id="result-grade"></div>
+        </div>
       </div>
 
       <div class="card export-card">
