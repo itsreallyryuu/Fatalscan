@@ -25,6 +25,18 @@
 <body>
 
   <div class="bg-grid"></div>
+  
+  <div id="offlineModal" class="offline-modal hidden">
+    <div class="offline-box">
+      <i data-lucide="server-off"></i>
+      <h2>Server Unavailable</h2>
+      <p>Fatalscan server is currently offline or unreachable. Please try again in a moment.</p>
+      <button id="retryBtn">
+        <i data-lucide="refresh-cw"></i>
+        <span>Retry</span>
+      </button>
+    </div>
+  </div>
 
   <div class="container">
 
