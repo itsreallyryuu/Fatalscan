@@ -94,7 +94,7 @@ app.get('/check/ports', (req, res) => {
   });
 });
 
-  socket.on('error', (err) => res.json({ s// 5. WHOIS Lookup
+// 5. WHOIS Lookup
 app.get('/check/whois', async (req, res) => {
   const { domain } = req.query;
   try {
