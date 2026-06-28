@@ -1,10 +1,35 @@
-const BASE_URL = '';
+const BASE_URL = 'http://localhost:3000';
 
 const scanBtn = document.getElementById('scanBtn');
 const exportBtn = document.getElementById('exportBtn');
 const urlInput = document.getElementById('urlInput');
 const loading = document.getElementById('loading');
 const results = document.getElementById('results');
+const offlineModal = document.getElementById('offlineModal');
+const retryBtn = document.getElementById('retryBtn');
+
+// Cek server saat pertama load
+async function checkServer() {
+  try {
+    await fetch(`${BASE_URL}/check/headers?url=https://example.com`);
+    offlineModal.classList.add('hidden');
+  } catch {
+    offlineModal.classList.remove('hidden');
+    lucide.createIcons();
+  }
+}
+
+checkServer();
+
+retryBtn.addEventListener('click', () => {
+  retryBtn.innerHTML = '<i data-lucide="loader"></i><span>Checking...</span>';
+  lucide.createIcons();
+  setTimeout(async () => {
+    await checkServer();
+    retryBtn.innerHTML = '<i data-lucide="refresh-cw"></i><span>Retry</span>';
+    lucide.createIcons();
+  }, 1500);
+});
 
 scanBtn.addEventListener('click', async () => {
   const input = urlInput.value.trim();
@@ -76,7 +101,8 @@ scanBtn.addEventListener('click', async () => {
     renderScore(headers, ssl, hsts, cors, clickjacking, referrer, permissions);
     renderGrade(headers, ssl, hsts, cors, clickjacking, referrer, permissions);
   } catch (err) {
-    alert('Error: ' + err.message);
+    offlineModal.classList.remove('hidden');
+    lucide.createIcons();
   } finally {
     loading.classList.add('hidden');
     results.classList.remove('hidden');
@@ -434,15 +460,131 @@ function renderGrade(headers, ssl, hsts, cors, clickjacking, referrer, permissio
   el.innerHTML = `<div class="score-wrap"><div class="score-number ${colorClass}">${grade}</div><div class="score-label ${colorClass}">Security Grade</div><div class="score-desc">Based on ${score}/100 security score</div></div>`;
 }
 
-exportBtn.addEventListener('click', () => {
-  const element = document.getElementById('results');
+exportBtn.addEventListener('click', async () => {
   const domain = urlInput.value.trim().replace(/^https?:\/\//, '').split('/')[0];
+
+  // Animasi loading button
+  exportBtn.disabled = true;
+  exportBtn.innerHTML = '<i data-lucide="loader"></i><span>Generating PDF...</span>';
+  lucide.createIcons();
+
+  // Buat elemen clone untuk PDF (light theme)
+  const original = document.getElementById('results');
+  const clone = original.cloneNode(true);
+
+  clone.style.cssText = `
+    background: #ffffff;
+    color: #111827;
+    padding: 24px;
+    font-family: Inter, sans-serif;
+    width: 794px;
+  `;
+
+  // Fix warna semua elemen di clone
+  clone.querySelectorAll('*').forEach(el => {
+    el.style.color = '#111827';
+    el.style.background = 'transparent';
+    el.style.borderColor = '#e5e7eb';
+    el.style.boxShadow = 'none';
+    el.style.textShadow = 'none';
+  });
+
+  clone.querySelectorAll('.card').forEach(el => {
+    el.style.background = '#f9fafb';
+    el.style.border = '1px solid #e5e7eb';
+    el.style.borderRadius = '8px';
+    el.style.padding = '16px';
+    el.style.marginBottom = '12px';
+  });
+
+  clone.querySelectorAll('.card-header h2').forEach(el => {
+    el.style.color = '#1e3a5f';
+    el.style.fontWeight = '600';
+  });
+
+  clone.querySelectorAll('.badge').forEach(el => {
+    el.style.padding = '2px 8px';
+    el.style.borderRadius = '12px';
+    el.style.fontSize = '0.75rem';
+    el.style.fontWeight = '600';
+  });
+
+  clone.querySelectorAll('.badge.aman').forEach(el => {
+    el.style.background = '#dcfce7';
+    el.style.color = '#166534';
+  });
+
+  clone.querySelectorAll('.badge.rentan').forEach(el => {
+    el.style.background = '#fee2e2';
+    el.style.color = '#991b1b';
+  });
+
+  clone.querySelectorAll('.badge.warning').forEach(el => {
+    el.style.background = '#fef9c3';
+    el.style.color = '#854d0e';
+  });
+
+  clone.querySelectorAll('.badge.info').forEach(el => {
+    el.style.background = '#dbeafe';
+    el.style.color = '#1e40af';
+  });
+
+  clone.querySelectorAll('.group-label').forEach(el => {
+    el.style.color = '#1d4ed8';
+    el.style.fontWeight = '700';
+    el.style.fontSize = '0.75rem';
+    el.style.letterSpacing = '2px';
+    el.style.textTransform = 'uppercase';
+    el.style.marginTop = '16px';
+  });
+
+  clone.querySelectorAll('.score-number').forEach(el => {
+    el.style.fontSize = '3rem';
+    el.style.fontWeight = '700';
+  });
+
+  clone.querySelectorAll('.score-good').forEach(el => { el.style.color = '#16a34a'; });
+  clone.querySelectorAll('.score-medium').forEach(el => { el.style.color = '#d97706'; });
+  clone.querySelectorAll('.score-bad').forEach(el => { el.style.color = '#dc2626'; });
+
+  // Tambah header PDF
+  const header = document.createElement('div');
+  header.style.cssText = 'text-align:center;padding:20px 0 16px;border-bottom:2px solid #1d4ed8;margin-bottom:20px;';
+  header.innerHTML = `
+    <h1 style="font-size:1.8rem;font-weight:700;color:#1e3a5f;margin:0;">Fatalscan Security Report</h1>
+    <p style="color:#6b7280;font-size:0.85rem;margin:6px 0 0;">Target: <strong style="color:#1d4ed8;">${domain}</strong> &nbsp;|&nbsp; Generated: ${new Date().toLocaleString()}</p>
+    <p style="color:#6b7280;font-size:0.8rem;margin:4px 0 0;">fatalscan.vercel.app &nbsp;|&nbsp; Built by Adann</p>
+  `;
+  clone.prepend(header);
+
+  // Sembunyikan export card di PDF
+  clone.querySelectorAll('.export-card').forEach(el => el.remove());
+
+  // Append ke body sementara (tidak terlihat)
+  clone.style.position = 'fixed';
+  clone.style.top = '-9999px';
+  clone.style.left = '-9999px';
+  document.body.appendChild(clone);
+
   const opt = {
-    margin: 10,
+    margin: [10, 10, 10, 10],
     filename: `fatalscan-${domain}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, backgroundColor: '#060b14' },
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: {
+      scale: 1.5,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false
+    },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
-  html2pdf().set(opt).from(element).save();
+
+  try {
+    await html2pdf().set(opt).from(clone).save();
+  } finally {
+    document.body.removeChild(clone);
+    exportBtn.disabled = false;
+    exportBtn.innerHTML = '<i data-lucide="download"></i><span>Download PDF</span>';
+    lucide.createIcons();
+  }
 });

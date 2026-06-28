@@ -94,28 +94,27 @@ app.get('/check/ports', (req, res) => {
   });
 });
 
-// 5. WHOIS Lookup
-const socket = new net.Socket();
-  let data = '';
-  socket.setTimeout(8000);
-  socket.connect(43, 'whois.iana.org', () => { socket.write(domain + '\r\n'); });
-  socket.on('data', (chunk) => { data += chunk.toString(); });
-  socket.on('close', () => {
-    const extract = (pattern) => {
-      const match = data.match(pattern);
-      return match ? match[1].trim() : 'N/A';
-    };
+  socket.on('error', (err) => res.json({ s// 5. WHOIS Lookup
+app.get('/check/whois', async (req, res) => {
+  const { domain } = req.query;
+  try {
+    const response = await axios.get(`https://api.whois.vu/?q=${domain}`, {
+      timeout: 8000,
+      headers: { 'Accept': 'application/json' }
+    });
+    const data = response.data;
     res.json({
       success: true,
-      registrar: extract(/Registrar:\s*(.+)/i),
-      createdDate: extract(/Creation Date:\s*(.+)/i),
-      expiresDate: extract(/Registry Expiry Date:\s*(.+)/i),
-      updatedDate: extract(/Updated Date:\s*(.+)/i),
-      status: extract(/Domain Status:\s*(.+)/i),
+      registrar: data.registrar || 'N/A',
+      createdDate: data.creation_date || 'N/A',
+      expiresDate: data.expiration_date || 'N/A',
+      updatedDate: data.updated_date || 'N/A',
+      status: data.status || 'N/A',
     });
-  });
-  socket.on('error', (err) => res.json({ success: false, message: err.message }));
-  socket.on('timeout', () => { socket.destroy(); res.json({ success: false, message: 'WHOIS timeout' }); });
+  } catch (err) {
+    res.json({ success: false, message: err.message });
+  }
+});
 
 // 6. HTTP Redirect Checker
 app.get('/check/redirects', async (req, res) => {
