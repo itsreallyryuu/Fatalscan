@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = '';
 
 const scanBtn = document.getElementById('scanBtn');
 const exportBtn = document.getElementById('exportBtn');
