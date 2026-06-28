@@ -11,8 +11,13 @@ const retryBtn = document.getElementById('retryBtn');
 // Cek server saat pertama load
 async function checkServer() {
   try {
-    await fetch(`${BASE_URL}/check/headers?url=https://example.com`);
-    offlineModal.classList.add('hidden');
+    const res = await fetch(`/check/headers?url=https://example.com`);
+    if (res.ok) {
+      offlineModal.classList.add('hidden');
+    } else {
+      offlineModal.classList.remove('hidden');
+      lucide.createIcons();
+    }
   } catch {
     offlineModal.classList.remove('hidden');
     lucide.createIcons();
