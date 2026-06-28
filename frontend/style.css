@@ -448,3 +448,182 @@ footer {
   letter-spacing: 2px;
   margin: 24px 0 10px;
 }
+
+/* About Developer */
+.about-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  background-color: #0d1829;
+  border: 1px solid #1e3a5f;
+  border-radius: 14px;
+  padding: 30px;
+  margin: 30px 0 16px;
+}
+
+.about-left {
+  flex: 1;
+}
+
+.about-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.about-name::after {
+  content: '.';
+  color: #3b82f6;
+}
+
+.about-real {
+  font-size: 0.85rem;
+  color: #3b82f6;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.about-desc {
+  font-size: 0.88rem;
+  color: #4b5563;
+  line-height: 1.6;
+  max-width: 480px;
+  margin-bottom: 20px;
+}
+
+.about-links {
+  display: flex;
+  gap: 14px;
+}
+
+.about-links a {
+  color: #4b5563;
+  transition: color 0.3s, transform 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.about-links a svg {
+  width: 22px;
+  height: 22px;
+}
+
+.about-links a:hover {
+  color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.about-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.trakteer-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.trakteer-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.trakteer-btn:hover {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+footer {
+  text-align: center;
+  padding: 20px 0 30px;
+  color: #1e3a5f;
+  font-size: 0.8rem;
+}
+
+footer a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .about-card {
+    flex-direction: column;
+  }
+  .about-right {
+    align-items: flex-start;
+    width: 100%;
+  }
+  .trakteer-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.about-links a i {
+  font-size: 22px;
+}
+
+.about-links a {
+  text-decoration: none;
+}
+
+/* Performance optimization */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg {
+  will-change: auto;
+}
+
+.bg-grid {
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+.features-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.features-bar span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #4b5563;
+  background: #0d1829;
+  border: 1px solid #1e3a5f;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+.features-bar span i {
+  color: #3b82f6;
+  font-size: 0.75rem;
+}

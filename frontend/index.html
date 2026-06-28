@@ -20,6 +20,7 @@
   <link rel="canonical" href="https://fatalscan.vercel.app" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
@@ -36,6 +37,14 @@
       <p class="sub-tagline">Detect vulnerabilities before attackers do</p>
     </header>
 
+<div class="features-bar">
+      <span><i class="fa-solid fa-shield-halved"></i> SSL Check</span>
+      <span><i class="fa-solid fa-code"></i> Headers Scan</span>
+      <span><i class="fa-solid fa-network-wired"></i> DNS Lookup</span>
+      <span><i class="fa-solid fa-door-open"></i> Port Scanner</span>
+      <span><i class="fa-solid fa-magnifying-glass"></i> WHOIS</span>
+    </div>
+    
     <div class="input-box">
       <div class="input-wrapper">
         <i data-lucide="globe"></i>
@@ -360,9 +369,71 @@
 
     </div>
 
+    <!-- About Developer -->
+    <div class="about-card">
+      <div class="about-left">
+        <h1 class="about-name">Adann</h1>
+        <p class="about-real">Akhdan Aryasatya Ramadhani</p>
+        <p class="about-desc">Independent developer building free & open security tools for everyone. Fatalscan is one of my projects — feel free to support or reach out!</p>
+        <div class="about-links">
+          <a href="https://github.com/itsreallyryuu" target="_blank" title="GitHub">
+            <i class="fa-brands fa-github"></i>
+          </a>
+          <a href="https://instagram.com/adannryuu" target="_blank" title="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="https://tiktok.com/@ryuutoyondekudasai" target="_blank" title="TikTok">
+            <i class="fa-brands fa-tiktok"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/hachiman-ryuu" target="_blank" title="LinkedIn">
+            <i class="fa-brands fa-linkedin"></i>
+          </a>
+          <a href="https://discord.gg/itsmeryuu_real" target="_blank" title="Discord">
+            <i class="fa-brands fa-discord"></i>
+          </a>
+        </div>
+      </div>
+      <div class="about-right">
+        <a href="https://trakteer.id/adannreal/gift" target="_blank" class="trakteer-btn">
+          <i data-lucide="coffee"></i>
+          <span>Support me on Trakteer</span>
+        </a>
+      </div>
+    </div>
+
     <footer>
-      <p>Fatalscan &copy; 2026 &mdash; For educational and ethical use only</p>
+      <p>Fatalscan &copy; 2026 &mdash; Built by <a href="https://github.com/itsreallyryuu" target="_blank">Adann</a> &mdash; For educational and ethical use only</p>
     </footer>
+
+    <!-- Schema Markup for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Fatalscan",
+      "url": "https://fatalscan.vercel.app",
+      "description": "Free advanced website security scanner. Detect vulnerabilities, check SSL, scan ports, analyze headers, and more.",
+      "applicationCategory": "SecurityApplication",
+      "operatingSystem": "Web",
+      "author": {
+        "@type": "Person",
+        "name": "Akhdan Aryasatya Ramadhani",
+        "alternateName": "Adann",
+        "url": "https://github.com/itsreallyryuu",
+        "sameAs": [
+          "https://github.com/itsreallyryuu",
+          "https://instagram.com/adannryuu",
+          "https://www.linkedin.com/in/hachiman-ryuu",
+          "https://tiktok.com/@ryuutoyondekudasai"
+        ]
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
 
   </div>
 
