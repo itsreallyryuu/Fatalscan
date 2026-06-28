@@ -5,36 +5,6 @@ const exportBtn = document.getElementById('exportBtn');
 const urlInput = document.getElementById('urlInput');
 const loading = document.getElementById('loading');
 const results = document.getElementById('results');
-const offlineModal = document.getElementById('offlineModal');
-const retryBtn = document.getElementById('retryBtn');
-
-// Cek server saat pertama load
-async function checkServer() {
-  try {
-    const res = await fetch(`/check/headers?url=https://example.com`);
-    if (res.ok) {
-      offlineModal.classList.add('hidden');
-    } else {
-      offlineModal.classList.remove('hidden');
-      lucide.createIcons();
-    }
-  } catch {
-    offlineModal.classList.remove('hidden');
-    lucide.createIcons();
-  }
-}
-
-checkServer();
-
-retryBtn.addEventListener('click', () => {
-  retryBtn.innerHTML = '<i data-lucide="loader"></i><span>Checking...</span>';
-  lucide.createIcons();
-  setTimeout(async () => {
-    await checkServer();
-    retryBtn.innerHTML = '<i data-lucide="refresh-cw"></i><span>Retry</span>';
-    lucide.createIcons();
-  }, 1500);
-});
 
 scanBtn.addEventListener('click', async () => {
   const input = urlInput.value.trim();
@@ -106,8 +76,7 @@ scanBtn.addEventListener('click', async () => {
     renderScore(headers, ssl, hsts, cors, clickjacking, referrer, permissions);
     renderGrade(headers, ssl, hsts, cors, clickjacking, referrer, permissions);
   } catch (err) {
-    offlineModal.classList.remove('hidden');
-    lucide.createIcons();
+    alert('Failed to connect. Please try again.');
   } finally {
     loading.classList.add('hidden');
     results.classList.remove('hidden');
