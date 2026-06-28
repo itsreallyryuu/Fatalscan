@@ -627,3 +627,156 @@ img, svg {
   color: #3b82f6;
   font-size: 0.75rem;
 }
+
+/* ===========================
+   SEO Section
+=========================== */
+
+.seo {
+  margin-top: 35px;
+  padding: 18px;
+  background: rgba(15, 23, 42, .7);
+  border: 1px solid rgba(59, 130, 246, .15);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+}
+
+/* Details */
+.seo details {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Summary */
+.seo summary {
+  cursor: pointer;
+  color: #fff;
+  font-size: .92rem;
+  font-weight: 600;
+  transition: color .2s;
+  user-select: none;
+}
+
+.seo summary:hover {
+  color: #60a5fa;
+}
+
+.seo summary::marker {
+  color: #60a5fa;
+}
+
+/* Heading */
+.seo h2 {
+  margin: 18px 0 8px;
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 600;
+}
+
+/* Paragraph */
+.seo p {
+  margin-bottom: 10px;
+  color: #b8c1d1;
+  font-size: .82rem;
+  line-height: 1.65;
+}
+
+/* List */
+.seo ul {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+}
+
+.seo li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 12px;
+
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+
+  color: #dbeafe;
+  font-size: .78rem;
+  transition: .2s ease;
+}
+
+.seo li::before {
+  content: "✓";
+  color: #22c55e;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.seo li:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59,130,246,.35);
+  background: rgba(59,130,246,.08);
+}
+
+/* Tablet */
+@media (max-width:768px){
+
+  .seo{
+    padding:16px;
+  }
+
+  .seo summary{
+    font-size:.88rem;
+  }
+
+  .seo h2{
+    font-size:.9rem;
+  }
+
+  .seo p{
+    font-size:.76rem;
+    line-height:1.6;
+  }
+
+  .seo ul{
+    grid-template-columns:1fr;
+  }
+
+  .seo li{
+    font-size:.75rem;
+    padding:8px 10px;
+  }
+
+}
+
+/* HP kecil */
+@media (max-width:480px){
+
+  .seo{
+    margin-top:28px;
+    padding:14px;
+    border-radius:12px;
+  }
+
+  .seo summary{
+    font-size:.85rem;
+  }
+
+  .seo h2{
+    font-size:.85rem;
+  }
+
+  .seo p{
+    font-size:.72rem;
+  }
+
+  .seo li{
+    font-size:.72rem;
+    padding:8px 10px;
+  }
+
+}
