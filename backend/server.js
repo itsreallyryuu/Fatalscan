@@ -6,8 +6,7 @@ const dns = require('dns');
 const net = require('net');
 
 const app = express();
-const PORT = process.env.PORT || 15664;
-const HOST = "0.0.0.0";
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -605,6 +604,6 @@ app.get('/check/swagger', async (req, res) => {
   res.json({ success: false });
 });
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server berjalan di ${HOST}:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server jalan di http://localhost:${PORT}`);
 });
