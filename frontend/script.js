@@ -23,7 +23,7 @@ scanBtn.addEventListener('click', async () => {
       emailleakage, commentleakage, sourcemap, manifest,
       mixedcontent, https, hsts, certexpiry,
       securitytxt, humanstxt, swagger
-    ] = await Promise.all([
+    ] = (await Promise.allSettled([
       fetch(`${BASE_URL}/check/headers?url=${encodeURIComponent(url)}`).then(r => r.json()),
       fetch(`${BASE_URL}/check/ssl?domain=${encodeURIComponent(domain)}`).then(r => r.json()),
       fetch(`${BASE_URL}/check/dns?domain=${encodeURIComponent(domain)}`).then(r => r.json()),
@@ -58,7 +58,7 @@ scanBtn.addEventListener('click', async () => {
       fetch(`${BASE_URL}/check/securitytxt?url=${encodeURIComponent(url)}`).then(r => r.json()),
       fetch(`${BASE_URL}/check/humanstxt?url=${encodeURIComponent(url)}`).then(r => r.json()),
       fetch(`${BASE_URL}/check/swagger?url=${encodeURIComponent(url)}`).then(r => r.json()),
-    ]);
+    ])).map(r => r.status === 'fulfilled' ? r.value : { success: false, message: 'Timeout or error' });
     renderHeaders(headers); renderSSL(ssl); renderDNS(dns); renderPorts(ports);
     renderWHOIS(whois); renderRedirects(redirects); renderTech(tech);
     renderMethods(methods); renderCORS(cors); renderCookies(cookies);
