@@ -2,14 +2,19 @@
   "name": "Fatalscan - Security Scanner",
   "short_name": "Fatalscan",
   "description": "Free advanced website security scanner. Detect vulnerabilities, check SSL, scan ports, analyze headers, and more.",
-  "start_url": "/",
+  "start_url": "https://fatalscan.vercel.app",
   "scope": "/",
   "display": "standalone",
   "background_color": "#060b14",
   "theme_color": "#3b82f6",
   "orientation": "portrait",
   "lang": "en",
-  "categories": ["utilities", "security"],
+  "categories": [
+    "developer",
+    "development",
+    "security",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "https://via.placeholder.com/192x192/3b82f6/ffffff?text=FS",
