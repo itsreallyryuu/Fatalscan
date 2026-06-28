@@ -95,18 +95,16 @@ app.get('/check/ports', (req, res) => {
 });
 
 // 5. WHOIS Lookup
-const whois = require('whois');
-
-app.get('/check/whois', (req, res) => {
-  const { domain } = req.query;
-  whois.lookup(domain, (err, data) => {
-    if (err) return res.json({ success: false, message: err.message });
-
+const socket = new net.Socket();
+  let data = '';
+  socket.setTimeout(8000);
+  socket.connect(43, 'whois.iana.org', () => { socket.write(domain + '\r\n'); });
+  socket.on('data', (chunk) => { data += chunk.toString(); });
+  socket.on('close', () => {
     const extract = (pattern) => {
       const match = data.match(pattern);
       return match ? match[1].trim() : 'N/A';
     };
-
     res.json({
       success: true,
       registrar: extract(/Registrar:\s*(.+)/i),
@@ -116,7 +114,8 @@ app.get('/check/whois', (req, res) => {
       status: extract(/Domain Status:\s*(.+)/i),
     });
   });
-});
+  socket.on('error', (err) => res.json({ success: false, message: err.message }));
+  socket.on('timeout', () => { socket.destroy(); res.json({ success: false, message: 'WHOIS timeout' }); });
 
 // 6. HTTP Redirect Checker
 app.get('/check/redirects', async (req, res) => {
