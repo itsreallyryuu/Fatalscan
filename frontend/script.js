@@ -438,27 +438,59 @@ exportBtn.addEventListener('click', () => {
   const domain = urlInput.value.trim().replace(/^https?:\/\//, '').split('/')[0];
   const rows = [];
 
-  rows.push(['Fatalscan Security Report']);
+  // Header
+  rows.push(['FATALSCAN SECURITY REPORT']);
   rows.push(['Target', domain]);
+  rows.push(['URL', `https://${domain}`]);
   rows.push(['Generated', new Date().toLocaleString()]);
+  rows.push(['Tool', 'fatalscan.vercel.app']);
+  rows.push(['Built by', 'Adann (Akhdan Aryasatya Ramadhani)']);
   rows.push(['']);
 
-  document.querySelectorAll('.card').forEach(card => {
-    if (card.classList.contains('export-card')) return;
-    const title = card.querySelector('.card-header h2')?.innerText || '';
-    rows.push([title]);
-    card.querySelectorAll('.item').forEach(item => {
-      const label = item.querySelector('span:first-child')?.innerText || '';
-      const value = item.querySelector('.badge')?.innerText || '';
-      rows.push(['', label, value]);
-    });
-    rows.push(['']);
+  // Ambil score & grade dulu
+  const scoreEl = document.querySelector('#result-score .score-number');
+  const gradeEl = document.querySelector('#result-grade .score-number');
+  const scoreLabelEl = document.querySelector('#result-score .score-label');
+  const gradeLabelEl = document.querySelector('#result-grade .score-label');
+
+  rows.push(['=== SECURITY SUMMARY ===']);
+  rows.push(['Security Score', scoreEl?.innerText || 'N/A', scoreLabelEl?.innerText || '']);
+  rows.push(['Security Grade', gradeEl?.innerText || 'N/A', gradeLabelEl?.innerText || '']);
+  rows.push(['']);
+
+  // Semua grup & card
+  document.querySelectorAll('.group-label').forEach(group => {
+    const groupName = group.innerText;
+    rows.push([`=== ${groupName} ===`]);
+
+    let el = group.nextElementSibling;
+    while (el && el.classList.contains('results-grid')) {
+      el.querySelectorAll('.card').forEach(card => {
+        if (card.classList.contains('score-card') || card.classList.contains('export-card')) return;
+        const title = card.querySelector('.card-header h2')?.innerText || '';
+        rows.push([title]);
+        card.querySelectorAll('.item').forEach(item => {
+          const label = item.querySelector('span:first-child')?.innerText || '';
+          const value = item.querySelector('.badge')?.innerText || '';
+          if (label && value) rows.push(['', label, value]);
+        });
+        rows.push(['']);
+      });
+      el = el.nextElementSibling;
+    }
   });
 
+  // Footer
+  rows.push(['=== END OF REPORT ===']);
+  rows.push(['For educational and ethical use only']);
+  rows.push(['fatalscan.vercel.app']);
+
+  // Buat Excel
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(rows);
 
-  ws['!cols'] = [{ wch: 30 }, { wch: 30 }, { wch: 30 }];
+  // Lebar kolom
+  ws['!cols'] = [{ wch: 35 }, { wch: 35 }, { wch: 25 }];
 
   XLSX.utils.book_append_sheet(wb, ws, 'Security Report');
   XLSX.writeFile(wb, `fatalscan-${domain}.xlsx`);
